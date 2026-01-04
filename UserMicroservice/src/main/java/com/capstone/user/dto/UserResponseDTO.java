@@ -11,6 +11,14 @@ public class UserResponseDTO {
     private String email;
     private Role role;
     private Boolean active;
+    private String token;
+
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
 	public UUID getId() {
 		return id;
 	}
