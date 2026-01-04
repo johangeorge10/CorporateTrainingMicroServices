@@ -53,3 +53,4 @@ target/
 .sts4-cache/
 
 bin/
+/.metadata/
