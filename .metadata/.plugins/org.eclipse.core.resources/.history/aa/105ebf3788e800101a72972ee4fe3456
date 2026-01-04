@@ -1,5 +1,0 @@
-package com.capstone.user.dto;
-
-public class UserResponseDTO {
-
-}

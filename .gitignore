@@ -2,6 +2,8 @@
 
 *.class
 
+#Metadata of eclipse
+.metadata/
 
 # Log file
 

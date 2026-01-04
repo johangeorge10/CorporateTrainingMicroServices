@@ -1,11 +1,13 @@
 package com.capstone.user.dto;
 
+import com.capstone.user.entity.Role;
+
 public class UserSignupRequestDTO {
 
     private String name;
     private String email;
     private String password;
-    private String role; // ADMIN / EMPLOYEE
+    private Role role; // ADMIN / EMPLOYEE
 	public String getName() {
 		return name;
 	}
@@ -24,10 +26,10 @@ public class UserSignupRequestDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 

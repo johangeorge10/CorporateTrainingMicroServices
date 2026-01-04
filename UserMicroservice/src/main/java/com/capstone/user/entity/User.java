@@ -1,5 +1,5 @@
 package com.capstone.user.entity;
-
+import com.capstone.user.entity.Role;
 import jakarta.persistence.*;
 import java.util.UUID;
 
@@ -12,7 +12,7 @@ import java.util.UUID;
 )
 public class User {
 
-    @Id
+	@Id
     @GeneratedValue
     private UUID id;
 
@@ -25,10 +25,17 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role; // ADMIN, EMPLOYEE ,Trainer 
+    private Role role;   // ADMIN, TRAINER, USER
 
+    @Column(nullable = false)
     private Boolean active = true;
+    
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
 
 	public UUID getId() {
 		return id;
@@ -62,12 +69,10 @@ public class User {
 		this.password = password;
 	}
 
-	public String getRole() {
-		return role;
-	}
+	
 
-	public void setRole(String role) {
-		this.role = role;
+	public Role getRole() {
+		return role;
 	}
 
 	public Boolean getActive() {

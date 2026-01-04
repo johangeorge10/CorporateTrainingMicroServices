@@ -2,12 +2,14 @@ package com.capstone.user.dto;
 
 import java.util.UUID;
 
+import com.capstone.user.entity.Role;
+
 public class UserResponseDTO {
 
     private UUID id;
     private String name;
     private String email;
-    private String role;
+    private Role role;
     private Boolean active;
 	public UUID getId() {
 		return id;
@@ -27,10 +29,10 @@ public class UserResponseDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 	public Boolean getActive() {

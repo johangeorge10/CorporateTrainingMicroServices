@@ -1,5 +1,0 @@
-package com.capstone.certification.client;
-
-public interface AssessmentClient {
-
-}

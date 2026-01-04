@@ -1,5 +1,0 @@
-package com.capstone.coursemanagement.repository;
-
-public interface CourseRepository {
-
-}

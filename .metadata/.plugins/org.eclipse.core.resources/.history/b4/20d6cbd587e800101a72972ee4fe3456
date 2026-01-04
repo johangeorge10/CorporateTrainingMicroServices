@@ -1,5 +1,0 @@
-package com.capstone.user.repository;
-
-public interface UserRepository {
-
-}

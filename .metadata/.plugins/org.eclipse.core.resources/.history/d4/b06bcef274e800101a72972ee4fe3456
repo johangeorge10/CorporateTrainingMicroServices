@@ -1,5 +1,0 @@
-package com.capstone.enrollment.client;
-
-public interface CourseFeignClient {
-
-}

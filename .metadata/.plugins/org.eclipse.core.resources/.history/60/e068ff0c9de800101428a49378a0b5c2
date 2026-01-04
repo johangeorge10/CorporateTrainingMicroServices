@@ -1,5 +1,0 @@
-package com.capstone.learningprogress.dto;
-
-public class CourseProgressResponseDTO {
-
-}
