@@ -1,0 +1,5 @@
+package com.capstone.assessment.entity;
+
+public class Assessment {
+
+}

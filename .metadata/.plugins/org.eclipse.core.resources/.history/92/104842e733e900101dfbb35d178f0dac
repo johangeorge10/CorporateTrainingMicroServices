@@ -1,0 +1,5 @@
+package com.capstone.certification.dto;
+
+public class AssessmentAttemptStatusDTO {
+
+}

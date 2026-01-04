@@ -1,0 +1,5 @@
+package com.capstone.assessment.dto;
+
+public class AssessmentResultDTO {
+
+}

@@ -1,0 +1,36 @@
+package com.johan.PayrollMicroservices.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
+@RestController
+public class PayrollController {
+	@Autowired
+	RestTemplate rs;
+		
+		@GetMapping("/greet/{id}")
+		@CircuitBreaker(name="service-employee",fallbackMethod="employeeFallback")
+		public String getPayroll(@PathVariable int id) {
+			//System.out.println("Name:Johan");
+			String url="http://service-employee/getname/"+id;
+			//throw new RuntimeException("Bruh");
+//			try {
+			String str=rs.getForObject(url, String.class);
+			return "Greetings" +str;
+//			}catch(Exception e){
+//				e.getMessage();
+//			}
+//			return "Nah";
+		}
+		
+		public String employeeFallback(int id,Throwable t) {
+			System.out.println("HElllllloooo");
+			return "Oops";
+		}
+	
+}

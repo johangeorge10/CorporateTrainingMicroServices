@@ -1,0 +1,49 @@
+package com.capstone.coursemanagement.controller;
+
+
+import com.capstone.coursemanagement.dto.CourseRequestDTO;
+import com.capstone.coursemanagement.dto.CourseResponseDTO;
+import com.capstone.coursemanagement.service.CourseService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/courses")
+public class CourseController {
+
+    private final CourseService service;
+
+    public CourseController(CourseService service) {
+        this.service = service;
+    }
+
+    @PostMapping
+    public CourseResponseDTO createCourse(@RequestBody CourseRequestDTO dto) {
+        return service.createCourse(dto);
+    }
+
+    @GetMapping("/{id}")
+    public CourseResponseDTO getCourse(@PathVariable UUID id) {
+        return service.getCourseById(id);
+    }
+
+    @GetMapping
+    public List<CourseResponseDTO> getAllCourses() {
+        return service.getAllCourses();
+    }
+
+    @PutMapping("/{id}")
+    public CourseResponseDTO updateCourse(
+            @PathVariable UUID id,
+            @RequestBody CourseRequestDTO dto) {
+        return service.updateCourse(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteCourse(@PathVariable UUID id) {
+        service.deleteCourse(id);
+        return "Course deleted successfully";
+    }
+}

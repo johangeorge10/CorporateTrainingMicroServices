@@ -1,0 +1,5 @@
+package com.capstone.coursemanagement.enitity;
+
+public class Course {
+
+}

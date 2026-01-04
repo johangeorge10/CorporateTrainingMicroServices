@@ -1,0 +1,65 @@
+package com.capstone.assessment.service;
+
+import com.capstone.assessment.dto.*;
+import com.capstone.assessment.entity.*;
+import com.capstone.assessment.repository.*;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class AssessmentService {
+
+    private final AssessmentRepository assessmentRepo;
+    private final QuestionRepository questionRepo;
+    private final AssessmentAttemptRepository attemptRepo;
+
+    public AssessmentService(AssessmentRepository assessmentRepo,
+                             QuestionRepository questionRepo,
+                             AssessmentAttemptRepository attemptRepo) {
+        this.assessmentRepo = assessmentRepo;
+        this.questionRepo = questionRepo;
+        this.attemptRepo = attemptRepo;
+    }
+
+    public AssessmentResultDTO attemptExam(AssessmentAttemptRequestDTO dto) {
+
+        Assessment assessment = assessmentRepo.findById(dto.getAssessmentId())
+                .orElseThrow(() -> new RuntimeException("Assessment not found"));
+
+        attemptRepo.findByUserIdAndAssessmentId(dto.getUserId(), dto.getAssessmentId())
+                .ifPresent(a -> {
+                    throw new RuntimeException("Assessment already attempted");
+                });
+
+        List<Question> questions =
+                questionRepo.findByAssessmentId(dto.getAssessmentId());
+
+        int correct = 0;
+
+        for (Question q : questions) {
+            String selected = dto.getAnswers().get(q.getId());
+            if (q.getCorrectOption().equalsIgnoreCase(selected)) {
+                correct++;
+            }
+        }
+
+        int score = (int) ((correct * 100.0) / questions.size());
+        boolean passed = score >= assessment.getPassPercentage();
+
+        AssessmentAttempt attempt = new AssessmentAttempt();
+        attempt.setUserId(dto.getUserId());
+        attempt.setAssessmentId(dto.getAssessmentId());
+        attempt.setScorePercentage(score);
+        attempt.setPassed(passed);
+        attempt.setAttemptedAt(LocalDateTime.now());
+
+        attemptRepo.save(attempt);
+
+        AssessmentResultDTO result = new AssessmentResultDTO();
+        result.setScorePercentage(score);
+        result.setPassed(passed);
+        return result;
+    }
+}

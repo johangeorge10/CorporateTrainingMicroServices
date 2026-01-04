@@ -1,0 +1,19 @@
+package com.capstone.assessment.client;
+
+import java.util.UUID;
+//import com.capstone.assessment.dto.CourseProgressDTO;
+import com.capstone.assessment.dto.CourseProgressResponseDTO;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+@FeignClient(name = "learning-progress-service")
+public interface LearningProgressFeignClient {
+
+    @GetMapping("/api/progress/course/{courseId}/user/{userId}")
+    CourseProgressResponseDTO getCourseProgress(
+    		@PathVariable("courseId") UUID courseId,
+            @PathVariable("userId") UUID userId
+    );
+}

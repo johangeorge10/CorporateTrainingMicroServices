@@ -1,0 +1,5 @@
+package com.capstone.assessment.repository;
+
+public interface AssessmentRepository {
+
+}

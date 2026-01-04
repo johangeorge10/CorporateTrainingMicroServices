@@ -1,0 +1,61 @@
+package com.capstone.assessment.entity;
+
+import jakarta.persistence.*;
+import java.util.UUID;
+
+@Entity
+@Table(
+    name = "assessments",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"courseId"})
+    }
+)
+public class Assessment {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @Column(nullable = false)
+    private UUID courseId;
+
+    @Column(nullable = false)
+    private Integer passPercentage; // 70
+
+    private Boolean active = true;
+
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public UUID getCourseId() {
+		return courseId;
+	}
+
+	public void setCourseId(UUID courseId) {
+		this.courseId = courseId;
+	}
+
+	public Integer getPassPercentage() {
+		return passPercentage;
+	}
+
+	public void setPassPercentage(Integer passPercentage) {
+		this.passPercentage = passPercentage;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+    // getters & setters
+    
+}

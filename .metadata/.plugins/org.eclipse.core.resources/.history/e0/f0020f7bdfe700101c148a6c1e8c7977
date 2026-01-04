@@ -1,0 +1,4 @@
+spring:
+  application:
+    name: LearningProgress		
+server.port: 8085

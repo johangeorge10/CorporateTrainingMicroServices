@@ -1,0 +1,5 @@
+package com.capstone.learningprogress.dto;
+
+public class ModuleProgressRequestDTO {
+
+}

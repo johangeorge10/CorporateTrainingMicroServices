@@ -1,0 +1,22 @@
+package com.capstone.assessment.controller;
+
+import com.capstone.assessment.dto.*;
+import com.capstone.assessment.service.AssessmentService;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/assessments")
+public class AssessmentController {
+
+    private final AssessmentService service;
+
+    public AssessmentController(AssessmentService service) {
+        this.service = service;
+    }
+
+    @PostMapping("/attempt")
+    public AssessmentResultDTO attemptExam(
+            @RequestBody AssessmentAttemptRequestDTO dto) {
+        return service.attemptExam(dto);
+    }
+}

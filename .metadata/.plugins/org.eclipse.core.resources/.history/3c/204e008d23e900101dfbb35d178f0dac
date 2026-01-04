@@ -1,0 +1,157 @@
+package com.capstone.assessment.service;
+
+import com.capstone.assessment.client.LearningProgressFeignClient;
+import com.capstone.assessment.dto.*;
+import com.capstone.assessment.entity.*;
+import com.capstone.assessment.repository.*;
+import org.springframework.stereotype.Service;
+//import org.springframework.web.bind.annotation.PathVariable;
+
+import java.time.LocalDateTime;
+import java.util.List;
+//import java.util.Optional;
+import java.util.UUID;
+
+@Service
+public class AssessmentService {
+
+    private final AssessmentRepository assessmentRepo;
+    private final QuestionRepository questionRepo;
+    private final AssessmentAttemptRepository attemptRepo;
+    private final LearningProgressFeignClient progressClient;
+
+    public AssessmentService(
+            AssessmentRepository assessmentRepo,
+            QuestionRepository questionRepo,
+            AssessmentAttemptRepository attemptRepo,
+            LearningProgressFeignClient progressClient) {
+        this.assessmentRepo = assessmentRepo;
+        this.questionRepo = questionRepo;
+        this.attemptRepo = attemptRepo;
+        this.progressClient = progressClient;
+    }
+
+    // -------- TRAINER --------
+
+    public Assessment createAssessment(UUID courseId, CreateAssessmentDTO dto) {
+        assessmentRepo.findByCourseId(courseId)
+                .ifPresent(a -> { throw new RuntimeException("Assessment already exists"); });
+
+        Assessment assessment = new Assessment();
+        assessment.setCourseId(courseId);
+        assessment.setPassPercentage(
+                dto.getPassPercentage() != null ? dto.getPassPercentage() : 70
+        );
+
+        return assessmentRepo.save(assessment);
+    }
+    public void deleteQuestion(UUID questionId) {
+        // Optional: Check existence first to give a better error message
+        if (!questionRepo.existsById(questionId)) {
+            throw new RuntimeException("Question not found with ID: " + questionId);
+        }
+        questionRepo.deleteById(questionId);
+    }
+    public List<Assessment> cassesmment() {
+    	return assessmentRepo.findAll();
+    }
+
+    public Question addQuestion(UUID assessmentId, QuestionCreateDTO dto) {
+        Assessment assessment = assessmentRepo.findById(assessmentId)
+                .orElseThrow(() -> new RuntimeException("Assessment not found"));
+
+        Question q = new Question();
+        q.setAssessmentId(assessment.getId());
+        q.setQuestionText(dto.getQuestionText());
+        q.setOptionA(dto.getOptionA());
+        q.setOptionB(dto.getOptionB());
+        q.setOptionC(dto.getOptionC());
+        q.setOptionD(dto.getOptionD());
+        q.setCorrectOption(dto.getCorrectOption());
+
+        return questionRepo.save(q);
+    }
+
+    // -------- USER --------
+
+    public List<QuestionUserViewDTO> getQuestionsForUser(UUID assessmentId) {
+        return questionRepo.findByAssessmentId(assessmentId)
+                .stream()
+                .map(q -> {
+                    QuestionUserViewDTO dto = new QuestionUserViewDTO();
+                    dto.setId(q.getId());
+                    dto.setQuestionText(q.getQuestionText());
+                    dto.setOptionA(q.getOptionA());
+                    dto.setOptionB(q.getOptionB());
+                    dto.setOptionC(q.getOptionC());
+                    dto.setOptionD(q.getOptionD());
+                    return dto;
+                }).toList();
+    }
+
+    public AssessmentResultDTO attemptExam(AssessmentAttemptRequestDTO dto) {
+
+        Assessment assessment = assessmentRepo.findById(dto.getAssessmentId())
+                .orElseThrow(() -> new RuntimeException("Assessment not found"));
+
+        // Eligibility check+
+        System.out.println("Assesment"+assessment);
+        System.out.println("Course Id:  "+assessment.getCourseId());
+        CourseProgressResponseDTO progress = progressClient.getCourseProgress(
+                assessment.getCourseId(), dto.getUserId());
+
+        if (progress.getCompletionPercentage() < 100) {
+        	System.out.println(progress.getCompletionPercentage());
+            throw new RuntimeException("Course not fully completed\n"+progress.toString()+"   id->   "+dto.getUserId()+"   Courseid  "+assessment.getCourseId()+"  ");
+        }
+
+        attemptRepo.findByUserIdAndAssessmentId(dto.getUserId(), dto.getAssessmentId())
+                .ifPresent(a -> { throw new RuntimeException("Assessment already attempted"); });
+
+        List<Question> questions = questionRepo.findByAssessmentId(dto.getAssessmentId());
+
+        int correct = 0;
+        for (Question q : questions) {
+            if (q.getCorrectOption().equalsIgnoreCase(dto.getAnswers().get(q.getId()))) {
+                correct++;
+            }
+        }
+
+        int score = (int) ((correct * 100.0) / questions.size());
+        boolean passed = score >= assessment.getPassPercentage();
+
+        AssessmentAttempt attempt = new AssessmentAttempt();
+        attempt.setUserId(dto.getUserId());
+        attempt.setAssessmentId(dto.getAssessmentId());
+        attempt.setScorePercentage(score);
+        attempt.setPassed(passed);
+        attempt.setAttemptedAt(LocalDateTime.now());
+
+        attemptRepo.save(attempt);
+
+        AssessmentResultDTO result = new AssessmentResultDTO();
+        result.setScorePercentage(score);
+        result.setPassed(passed);
+        return result;
+    }
+    public AssessmentAttemptStatusDTO getAttemptStatus(UUID userId, UUID assessmentId) {
+
+        return attemptRepo
+            .findByUserIdAndAssessmentId(userId, assessmentId)
+            .map(attempt -> new AssessmentAttemptStatusDTO(
+                    true,
+                    attempt.getPassed(),
+                    attempt.getScorePercentage(),
+                    attempt.getAttemptedAt()
+            ))
+            .orElse(new AssessmentAttemptStatusDTO(false, false, null, null));
+    }
+
+    public String EditCourseId( UUID courseId, UUID assesmentId) {
+    	Assessment assessment = assessmentRepo.findById(assesmentId).orElseThrow(() -> new RuntimeException("NotFound"));
+    	assessment.setCourseId(courseId);
+    	assessmentRepo.save(assessment);
+    	return "success";
+    }
+}
+
