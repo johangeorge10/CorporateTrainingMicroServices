@@ -4,6 +4,8 @@ import com.capstone.user.dto.UserLoginRequestDTO;
 import com.capstone.user.dto.UserResponseDTO;
 import com.capstone.user.dto.UserSignupRequestDTO;
 import com.capstone.user.service.UserService;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,12 +30,12 @@ public class UserController {
     public UserResponseDTO login(@RequestBody UserLoginRequestDTO dto) {
         return service.login(dto);
     }
-
+    
     @GetMapping("/{userId}")
     public UserResponseDTO getUser(@PathVariable UUID userId) {
         return service.getUserById(userId);
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public List<UserResponseDTO> getAllUsers() {
         return service.getAllUsers();

@@ -6,7 +6,7 @@ spring:
     name: enrollment-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/enrollment_db
+    url: jdbc:mysql://localhost:3306/enrollment_db?createDatabaseIfNotExist=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver

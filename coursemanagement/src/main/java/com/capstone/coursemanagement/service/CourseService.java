@@ -3,6 +3,7 @@ package com.capstone.coursemanagement.service;
 import com.capstone.coursemanagement.dto.CourseRequestDTO;
 import com.capstone.coursemanagement.dto.CourseResponseDTO;
 import com.capstone.coursemanagement.entity.Course;
+import com.capstone.coursemanagement.repository.CourseModuleRepository;
 import com.capstone.coursemanagement.repository.CourseRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +15,10 @@ import java.util.stream.Collectors;
 public class CourseService {
 
     private final CourseRepository repository;
-
-    public CourseService(CourseRepository repository) {
+    private final CourseModuleRepository crp;
+    public CourseService(CourseRepository repository,CourseModuleRepository crp) {
         this.repository = repository;
+        this.crp=crp;
     }
 
     public CourseResponseDTO createCourse(CourseRequestDTO dto) {
@@ -56,6 +58,7 @@ public class CourseService {
 
     public void deleteCourse(UUID id) {
         repository.deleteById(id);
+        System.out.println(crp.removeByCourseId(id));
     }
 
     private CourseResponseDTO mapToResponse(Course course) {

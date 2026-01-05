@@ -11,4 +11,6 @@ public interface CourseModuleRepository extends JpaRepository<CourseModule, UUID
 
     List<CourseModule> findByCourseIdOrderByModuleOrder(UUID courseId);
     List<CourseModule> findByCourseId(UUID courseId);
+    
+    long removeByCourseId(UUID courseId);
 }

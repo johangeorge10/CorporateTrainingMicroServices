@@ -2,6 +2,8 @@ package com.capstone.certification.controller;
 
 import com.capstone.certification.entity.Certificate;
 import com.capstone.certification.service.CertificationService;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +18,7 @@ public class CertificationController {
     public CertificationController(CertificationService service) {
         this.service = service;
     }
-
+    @PreAuthorize("hasAnyRole('TRAINEE')")
     @PostMapping("/issue")
     public Certificate issueCertificate(
             @RequestParam UUID userId,
@@ -24,7 +26,7 @@ public class CertificationController {
 
         return service.issueCertificate(userId, courseId);
     }
-
+    @PreAuthorize("hasAnyRole('TRAINEE')")
     @GetMapping("/user/{userId}")
     public List<Certificate> getUserCertificates(
             @PathVariable UUID userId) {
