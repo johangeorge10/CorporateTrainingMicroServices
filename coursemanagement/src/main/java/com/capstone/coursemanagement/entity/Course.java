@@ -24,6 +24,10 @@ public class Course {
 
     private Boolean active = true;
 
+    // Store trainer ID from UserService
+    @Column(name = "trainer_id", columnDefinition = "BINARY(16)")
+    private UUID trainerId;
+
     // getters & setters
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
@@ -42,4 +46,12 @@ public class Course {
 
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
+
+    public UUID getTrainerId() {
+        return trainerId;
+    }
+
+    public void setTrainerId(UUID trainerId) {
+        this.trainerId = trainerId;
+    }
 }

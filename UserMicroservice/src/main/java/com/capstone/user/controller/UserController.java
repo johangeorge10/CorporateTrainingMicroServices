@@ -35,6 +35,7 @@ public class UserController {
     public UserResponseDTO getUser(@PathVariable UUID userId) {
         return service.getUserById(userId);
     }
+
     @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public List<UserResponseDTO> getAllUsers() {

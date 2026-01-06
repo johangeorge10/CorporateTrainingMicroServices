@@ -1,7 +1,9 @@
 package com.capstone.coursemanagement.service;
 
+import com.capstone.coursemanagement.client.UserClient;
 import com.capstone.coursemanagement.dto.CourseRequestDTO;
 import com.capstone.coursemanagement.dto.CourseResponseDTO;
+import com.capstone.coursemanagement.dto.UserDTO;
 import com.capstone.coursemanagement.entity.Course;
 import com.capstone.coursemanagement.repository.CourseModuleRepository;
 import com.capstone.coursemanagement.repository.CourseRepository;
@@ -16,17 +18,26 @@ public class CourseService {
 
     private final CourseRepository repository;
     private final CourseModuleRepository crp;
-    public CourseService(CourseRepository repository,CourseModuleRepository crp) {
+    private final UserClient userClient;
+    public CourseService(CourseRepository repository, CourseModuleRepository crp, UserClient userClient) {
         this.repository = repository;
         this.crp=crp;
+        this.userClient = userClient;
     }
 
-    public CourseResponseDTO createCourse(CourseRequestDTO dto) {
+    public CourseResponseDTO createCourse(CourseRequestDTO dto, UUID trainerId) {
+        UserDTO trainer = userClient.getUserById(trainerId);
+
+        if (!"TRAINER".equalsIgnoreCase(trainer.getRole())) {
+            throw new RuntimeException("User is not a trainer!");
+        }
+
         Course course = new Course();
         course.setTitle(dto.getTitle());
         course.setDescription(dto.getDescription());
         course.setSkillLevel(dto.getSkillLevel());
         course.setDurationHours(dto.getDurationHours());
+        course.setTrainerId(trainerId);
 
         return mapToResponse(repository.save(course));
     }
@@ -59,6 +70,19 @@ public class CourseService {
     public void deleteCourse(UUID id) {
         repository.deleteById(id);
         System.out.println(crp.removeByCourseId(id));
+    }
+
+    public List<Course> getCoursesByTrainer(UUID trainerId) {
+        // Optional: Validate trainer exists
+        UserDTO trainer = userClient.getUserById(trainerId);
+        if (trainer == null) {
+            throw new RuntimeException("Trainer not found in User Service");
+        }
+        if (!"TRAINER".equalsIgnoreCase(trainer.getRole())) {
+            throw new RuntimeException("User is not a Trainer");
+        }
+
+        return repository.findByTrainerId(trainerId);
     }
 
     private CourseResponseDTO mapToResponse(Course course) {
