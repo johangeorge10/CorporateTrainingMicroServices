@@ -1,0 +1,83 @@
+server:
+  port: 8080
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    urls:
+      - name: User Service
+        url: /user-service/v3/api-docs
+      - name: Course Management Service
+        url: /course-management-service/v3/api-docs
+      - name: Enrollment Service
+        url: /enrollment-service/v3/api-docs
+      - name: Assessment Service
+        url: /assessment-service/v3/api-docs
+      - name: Certification Service
+        url: /certification-microservice/v3/api-docs
+      - name: Learning Progress Service
+        url: /learning-progress-service/v3/api-docs
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      # --- NEW: CORS CONFIGURATION STARTS HERE ---
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+      # --- CORS CONFIGURATION ENDS HERE ---
+
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+
+        - id: course-management-service
+          uri: lb://course-management-service
+          predicates:
+            - Path=/api/courses/**,/api/modules/**
+
+        - id: enrollment-service
+          uri: lb://enrollment-service
+          predicates:
+            - Path=/api/enrollments/**
+
+        - id: assessment-service
+          uri: lb://assessment-service
+          predicates:
+            - Path=/api/assessments/**
+
+        - id: Certification-Microservice
+          uri: lb://Certification-Microservice
+          predicates:
+            - Path=/api/certificates/**
+
+        - id: learning-progress-service
+          uri: lb://learning-progress-service
+          predicates:
+            - Path=/api/progress/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
