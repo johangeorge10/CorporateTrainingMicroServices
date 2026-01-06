@@ -3,6 +3,7 @@ package com.capstone.coursemanagement.controller;
 
 import com.capstone.coursemanagement.dto.CourseRequestDTO;
 import com.capstone.coursemanagement.dto.CourseResponseDTO;
+import com.capstone.coursemanagement.entity.Course;
 import com.capstone.coursemanagement.service.CourseService;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,9 +24,9 @@ public class CourseController {
 
     //Controller
     @PreAuthorize("hasRole('TRAINER')")
-    @PostMapping
-    public CourseResponseDTO createCourse(@RequestBody CourseRequestDTO dto) {
-        return service.createCourse(dto);
+    @PostMapping("/create")
+    public CourseResponseDTO createCourse(@RequestBody CourseRequestDTO dto, @RequestParam UUID trainerId) {
+        return service.createCourse(dto, trainerId);
     }
     @PreAuthorize("hasRole('TRAINEE')")
     @GetMapping("/{id}")
@@ -50,5 +51,10 @@ public class CourseController {
     public String deleteCourse(@PathVariable UUID id) {
         service.deleteCourse(id);
         return "Course deleted successfully";
+    }
+
+    @GetMapping("/trainer/{trainerId}")
+    public List<Course> getCoursesByTrainer(@PathVariable UUID trainerId) {
+        return service.getCoursesByTrainer(trainerId);
     }
 }
