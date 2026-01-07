@@ -46,8 +46,14 @@ public class LearningProgressService {
         int totalModules =courseClient.getModulesByCourse(courseId).size();
         System.out.println("Total Modules :"+totalModules);
 
+//        long completedModules =
+//                repository.countByUserIdAndCourseIdAndCompletedTrue(userId, courseId);
         long completedModules =
-                repository.countByUserIdAndCourseIdAndCompletedTrue(userId, courseId);
+                repository.countCompleted(
+                userId.toString(),
+                courseId.toString()
+            );
+        
         System.out.println("Completed  Modules :"+completedModules);
 
         double percentage =

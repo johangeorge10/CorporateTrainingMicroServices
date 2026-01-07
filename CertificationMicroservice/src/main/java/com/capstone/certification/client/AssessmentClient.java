@@ -1,5 +1,6 @@
 package com.capstone.certification.client;
 
+import com.capstone.certification.config.FeignClientConfig;
 import com.capstone.certification.dto.AssessmentAttemptStatusDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
-@FeignClient(name = "assessment-service")
+@FeignClient(name = "assessment-service",configuration = FeignClientConfig.class)
 public interface AssessmentClient {
 
     @GetMapping("/api/assessments/attempt/status")
