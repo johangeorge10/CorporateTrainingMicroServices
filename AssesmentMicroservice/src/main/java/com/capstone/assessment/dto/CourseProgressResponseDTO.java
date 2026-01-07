@@ -7,6 +7,29 @@ public class CourseProgressResponseDTO {
     private int completedModules;
     private double completionPercentage;
     private boolean eligibleForAssessment;
+    
+    //For fall back method
+    private int progress;
+    private String message;
+    public CourseProgressResponseDTO(int progress,String message ) 
+    {
+    	this.progress=progress;
+    	this.message=message;
+    } 
+	public int getProgress() {
+		return progress;
+	}
+	public void setProgress(int progress) {
+		this.progress = progress;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	
 	public int getTotalModules() {
 		return totalModules;
 	}

@@ -6,6 +6,8 @@ public class EnrollmentRequestDTO {
 
     private UUID userId;
     private UUID courseId;
+    
+  
 	public UUID getUserId() {
 		return userId;
 	}

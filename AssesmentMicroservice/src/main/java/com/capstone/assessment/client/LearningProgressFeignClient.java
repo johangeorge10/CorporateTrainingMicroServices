@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "learning-progress-service")
+@FeignClient(name = "learning-progress-service", fallback=LearningProgressFeignClientFallback.class)
 public interface LearningProgressFeignClient {
 
     @GetMapping("/api/progress/course/{courseId}/user/{userId}")
