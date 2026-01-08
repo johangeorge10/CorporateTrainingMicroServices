@@ -8,7 +8,20 @@ public class UserDTO {
     private String email;
     private String role;
 
-    public String getEmail() {
+    //For fall back method
+    private String message;
+    public UserDTO(String message) {
+    	this.message=message;
+    }
+    public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
+	
+	public String getEmail() {
         return email;
     }
 

@@ -10,7 +10,9 @@ import com.capstone.learningprogress.dto.CourseModuleDTO;
 import java.util.List;
 import java.util.UUID;
 
-@FeignClient(name = "course-management-service",configuration = FeignClientConfig.class)
+
+@FeignClient(name = "course-management-service",configuration = FeignClientConfig.class, fallback=CourseFeignClientFallback.class)
+
 public interface CourseFeignClient {
 
     @GetMapping("/api/modules/course/{courseId}")

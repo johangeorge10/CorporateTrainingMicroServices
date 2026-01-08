@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
-@FeignClient(name = "assessment-service",configuration = FeignClientConfig.class)
+@FeignClient(name = "assessment-service", configuration = FeignClientConfig.class, fallback = AssessmentClientFallback.class)
 public interface AssessmentClient {
 
     @GetMapping("/api/assessments/attempt/status")
@@ -16,4 +16,5 @@ public interface AssessmentClient {
             @RequestParam UUID userId,
             @RequestParam UUID courseId
     );
+    
 }
