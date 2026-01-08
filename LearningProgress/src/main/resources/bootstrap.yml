@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: learning-progress-service   
+
+  cloud:
+    config:
+      uri: http://localhost:8888
+      name: common,learning-progress-service

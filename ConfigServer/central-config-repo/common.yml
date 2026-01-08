@@ -1,0 +1,13 @@
+jwt:
+  secret: THIS_IS_A_VERY_LONG_AND_SECURE_SECRET_KEY_FOR_JWT_256_BITS_123456
+
+spring:
+  datasource:
+    username: root
+    password: Root123$
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: Certification-Microservice   
+
+  cloud:
+    config:
+      uri: http://localhost:8888
+      name: common,Certification-Microservice
