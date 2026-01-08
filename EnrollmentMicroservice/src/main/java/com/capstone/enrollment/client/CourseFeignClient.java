@@ -6,13 +6,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.capstone.enrollment.config.FeignClientConfig;
 
-<<<<<<< HEAD
-@FeignClient(name = "course-management-service", url = "http://localhost:8082" , fallback=CourseFeignClientFallback.class)
-=======
+
 import java.util.UUID;
 //import com.capstone.enrollment.config.*;
-@FeignClient(name = "course-management-service", url = "http://localhost:8082" ,configuration = FeignClientConfig.class)
->>>>>>> origin/main
+
+@FeignClient(name = "course-management-service", url = "http://localhost:8082" ,configuration = FeignClientConfig.class , fallback=CourseFeignClientFallback.class)
 public interface CourseFeignClient {
 
     @GetMapping("/api/courses/{courseId}")
