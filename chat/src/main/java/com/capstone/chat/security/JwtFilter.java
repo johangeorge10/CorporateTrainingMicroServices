@@ -16,7 +16,7 @@ import java.util.Collections;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final String secretKey = "YOUR_SECRET_KEY"; // Same as user-service
+    private final String secretKey = "THIS_IS_A_VERY_LONG_AND_SECURE_SECRET_KEY_FOR_JWT_256_BITS_123456"; // Same as user-service
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
