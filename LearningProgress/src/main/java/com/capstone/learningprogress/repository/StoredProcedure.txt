@@ -1,0 +1,21 @@
+#Stored Procedure for long countByUserIdAndCourseIdAndCompletedTrue(UUID userId, UUID courseId);
+#Save this procedure in mysql inside learning_progress_db
+
+
+DELIMITER $$
+
+CREATE PROCEDURE count_completed_by_user_and_course(
+    IN  p_user_id CHAR(36),
+    IN  p_course_id CHAR(36),
+    OUT p_completed_count BIGINT
+)
+BEGIN
+    SELECT COUNT(*)
+    INTO p_completed_count
+    FROM module_progress
+    WHERE user_id = p_user_id
+      AND course_id = p_course_id
+      AND completed = true;
+END$$
+
+DELIMITER ;

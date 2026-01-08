@@ -3,7 +3,15 @@ package com.capstone.learningprogress.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+@NamedStoredProcedureQuery(
+	    name = "ModuleProgress.countCompleted",
+	    procedureName = "count_completed_by_user_and_course",
+	    parameters = {
+	        @StoredProcedureParameter(mode = ParameterMode.IN,  name = "p_user_id", type = String.class),
+	        @StoredProcedureParameter(mode = ParameterMode.IN,  name = "p_course_id", type = String.class),
+	        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "p_completed_count", type = Long.class)
+	    }
+	)
 @Entity
 @Table(
     name = "module_progress",

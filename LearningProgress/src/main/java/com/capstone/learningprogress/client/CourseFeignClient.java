@@ -4,12 +4,15 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.capstone.learningprogress.config.FeignClientConfig;
 import com.capstone.learningprogress.dto.CourseModuleDTO;
 
 import java.util.List;
 import java.util.UUID;
 
-@FeignClient(name = "course-management-service",fallback=CourseFeignClientFallback.class)
+
+@FeignClient(name = "course-management-service",configuration = FeignClientConfig.class, fallback=CourseFeignClientFallback.class)
+
 public interface CourseFeignClient {
 
     @GetMapping("/api/modules/course/{courseId}")
