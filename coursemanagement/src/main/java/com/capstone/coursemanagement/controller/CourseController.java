@@ -33,7 +33,7 @@ public class CourseController {
     public CourseResponseDTO getCourse(@PathVariable UUID id) {
         return service.getCourseById(id);
     }
-    @PreAuthorize("hasAnyRole('TRAINER','ADMIN','TRAINEE')")
+    @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN') or hasRole('TRAINEE')")
     @GetMapping
     public List<CourseResponseDTO> getAllCourses() {
         return service.getAllCourses();
@@ -46,13 +46,13 @@ public class CourseController {
             @RequestBody CourseRequestDTO dto) {
         return service.updateCourse(id, dto);
     }
-    @PreAuthorize("hasRole('TRAINER','ADMIN')")
+    @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public String deleteCourse(@PathVariable UUID id) {
         service.deleteCourse(id);
         return "Course deleted successfully";
     }
-
+    @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN')")
     @GetMapping("/trainer/{trainerId}")
     public List<Course> getCoursesByTrainer(@PathVariable UUID trainerId) {
         return service.getCoursesByTrainer(trainerId);
