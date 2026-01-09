@@ -12,6 +12,7 @@ public class UserClientFallback implements UserClient {
 	@Override
 	public UserDTO getUserById(UUID id) {
 		// TODO Auto-generated method stub
+		System.out.println("User service is currently unavailable");
 		return new UserDTO("User service is currently unavailable");
 	}
 //	@Override

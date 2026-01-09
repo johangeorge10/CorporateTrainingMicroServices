@@ -5,6 +5,12 @@ spring:
   application:
     name: learning-progress-service
 
+  # ✅ Added for Feign fallback/Circuit Breaker support
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+
   datasource:
     url: jdbc:mysql://localhost:3306/learning_progress_db?createDatabaseIfNotExist=true
     username: root
