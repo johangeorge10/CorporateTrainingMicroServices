@@ -30,6 +30,10 @@ public class Chat {
     }
 
     public Chat(ChatDTO message) {
+        this.senderId=message.getSenderId();
+        this.receiverId=message.getReceiverId();
+        this.content= message.getContent();
+        this.timestamp=LocalDateTime.now();
     }
 
     public Long getId() {

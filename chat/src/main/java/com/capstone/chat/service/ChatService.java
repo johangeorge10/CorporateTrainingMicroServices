@@ -24,25 +24,17 @@ public class ChatService {
     }
 
     public void sendMessage (ChatDTO message, Principal principal){
-        try {
-            UUID senderUuid = UUID.fromString(principal.getName());
-            message.setSenderId(senderUuid);
-            message.setTimestamp(LocalDateTime.now());
+        // 1. Save to Database
+        Chat chat = new Chat(message);
+        chatRepository.save(chat);
 
-            // Converting DTO to Entity
-            Chat entity = new Chat();
-            entity.setSenderId(message.getSenderId());
-            entity.setReceiverId(message.getReceiverId());
-            entity.setContent(message.getContent());
-            entity.setTimestamp(message.getTimestamp());
-            chatRepository.save(entity);
-
-            // Send to the receiver
-            messagingTemplate.convertAndSendToUser(
-                    message.getReceiverId().toString(), "/queue/messages", message);
-        }catch(IllegalArgumentException e){
-            System.err.println("Invalid UUID from Principal: " + principal.getName());
-        }
+        // 2. Send to the specific user via WebSocket
+        // Destination: /user/{receiverId}/queue/messages
+        messagingTemplate.convertAndSendToUser(
+                message.getReceiverId().toString(),
+                "/queue/messages",
+                message
+        );
     }
 
     public List<Chat> getChatHistory(
