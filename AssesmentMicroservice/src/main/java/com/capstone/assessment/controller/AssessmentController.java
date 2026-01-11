@@ -6,8 +6,10 @@ import com.capstone.assessment.entity.Question;
 import com.capstone.assessment.service.AssessmentService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +24,25 @@ public class AssessmentController {
     }
 
     // -------- TRAINER --------
+    
+    @GetMapping("/course/{courseId}")
+    @PreAuthorize("hasRole('TRAINER')")
+    public ResponseEntity<?> getAssessmentByCourseId(@PathVariable UUID courseId) {
+        // Step 1: Search for assessment by courseId
+        // You'll need to add this method to AssessmentRepository
+    	Assessment assessment = service.findAssessmentByCourseId(courseId)
+                .orElseThrow(() -> new RuntimeException("No assessment found for course: " + courseId));
+
+        // Step 2: If assessment found, get all questions
+        List<Question> questions = service.findQuestionsByAssessmentId(assessment.getId());
+
+        // Step 3: Return combined response
+        return ResponseEntity.ok(Map.of(
+                "assessment", assessment,
+                "questions", questions
+        ));
+    }
+    
     @PreAuthorize("hasAnyRole('TRAINER')")
     @PostMapping("/course/{courseId}")
     public Assessment createAssessment(
@@ -34,6 +55,7 @@ public class AssessmentController {
     public List<Assessment> cassesment() {
     	return service.cassesmment();
     }
+    //${this.baseUrl}/course/${courseId}
     @PreAuthorize("hasAnyRole('TRAINER')")
     @PostMapping("/{assessmentId}/questions")
     public Question addQuestion(

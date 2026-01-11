@@ -23,6 +23,12 @@ public class CourseController {
     }
 
     //Controller
+//    @PreAuthorize("hasRole('TRAINER')")
+//    @GetMapping("/trainer/{trainerId}")
+//    public List<CourseResponseDTO> getcoursebytrainer(@PathVariable UUID id){
+//    	return service.getCoursesByTrainer(id);
+//    }
+    
     @PreAuthorize("hasRole('TRAINER')")
     @PostMapping("/create")
     public CourseResponseDTO createCourse(@RequestBody CourseRequestDTO dto, @RequestParam UUID trainerId) {
@@ -55,6 +61,7 @@ public class CourseController {
     @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN')")
     @GetMapping("/trainer/{trainerId}")
     public List<Course> getCoursesByTrainer(@PathVariable UUID trainerId) {
+    	System.out.println("Called");
         return service.getCoursesByTrainer(trainerId);
     }
 }

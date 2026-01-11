@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -43,6 +44,14 @@ public class AssessmentService {
         );
 
         return assessmentRepo.save(assessment);
+    }
+ // In AssessmentService.java
+    public Optional<Assessment> findAssessmentByCourseId(UUID courseId) {
+        return assessmentRepo.findByCourseId(courseId);
+    }
+
+    public List<Question> findQuestionsByAssessmentId(UUID assessmentId) {
+        return questionRepo.findByAssessmentId(assessmentId);
     }
     public void deleteQuestion(UUID questionId) {
         // Optional: Check existence first to give a better error message

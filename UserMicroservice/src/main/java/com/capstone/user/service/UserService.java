@@ -76,6 +76,7 @@ public class UserService {
     public UserResponseDTO getUserById(UUID userId) {
         User user = repository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println(user.getName()+"" +user.getRole());
         return mapToResponse(user, null);
     }
 

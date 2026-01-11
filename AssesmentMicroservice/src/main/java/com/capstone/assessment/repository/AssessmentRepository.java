@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface AssessmentRepository extends JpaRepository<Assessment, UUID> {
     Optional<Assessment> findByCourseId(UUID courseId);
     //Assessment findByCourseId(UUID courseId);
+   
 }
 
 

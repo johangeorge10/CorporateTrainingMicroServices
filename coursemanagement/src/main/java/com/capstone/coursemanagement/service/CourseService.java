@@ -8,6 +8,7 @@ import com.capstone.coursemanagement.entity.Course;
 import com.capstone.coursemanagement.repository.CourseModuleRepository;
 import com.capstone.coursemanagement.repository.CourseRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +42,25 @@ public class CourseService {
 
         return mapToResponse(repository.save(course));
     }
+    
+//    public List<CourseResponseDTO> getCoursesByTrainer(UUID id) {
+//
+//        List<Course> courses = repository.findByTrainerId(id);
+//
+//        return courses.stream()
+//                .map(course -> {
+//                    CourseResponseDTO dto = new CourseResponseDTO();
+//                    dto.setId(course.getId());
+//                    dto.setTitle(course.getTitle());
+//                    dto.setDescription(course.getDescription());
+//                    dto.setSkillLevel(course.getSkillLevel());
+//                    dto.setDurationHours(course.getDurationHours());
+//                    dto.setActive(course.getActive());
+//                    return dto;
+//                })
+//                .toList();   // Java 16+
+//    }
+
 
     public CourseResponseDTO getCourseById(UUID id) {
         Course course = repository.findById(id)
@@ -74,13 +94,14 @@ public class CourseService {
 
     public List<Course> getCoursesByTrainer(UUID trainerId) {
         // Optional: Validate trainer exists
-        UserDTO trainer = userClient.getUserById(trainerId);
-        if (trainer == null) {
-            throw new RuntimeException("Trainer not found in User Service");
-        }
-        if (!"TRAINER".equalsIgnoreCase(trainer.getRole())) {
-            throw new RuntimeException("User is not a Trainer");
-        }
+//        UserDTO trainer = userClient.getUserById(trainerId);
+//        if (trainer == null) {
+//            throw new RuntimeException("Trainer not found in User Service");
+//        }
+        System.out.println("Trainer Role ");
+//        if (!"TRAINER".equalsIgnoreCase(trainer.getRole())) {
+//            throw new RuntimeException("User is not a Trainer");
+//        }
 
         return repository.findByTrainerId(trainerId);
     }

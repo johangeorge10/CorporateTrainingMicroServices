@@ -4,37 +4,45 @@ import java.util.UUID;
 
 public class UserDTO {
     private UUID id;
-    private String username;
+    private String name;        // Changed from 'username' to 'name'
     private String email;
-    private String role;
-
-    //For fall back method
+    private String role;        // Keep as String, we'll handle the enum
+    private Boolean active;
+    private String token;
+    
+    // Default constructor
+    public UserDTO() {}
+    
+    // Constructor for fallback
     private String message;
     public UserDTO(String message) {
-    	this.message=message;
+        this.message = message;
+        this.role = message;  // Set role to message for fallback
     }
-    public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	
-	
-	public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    
+    // Getters and Setters
     public UUID getId() {
         return id;
     }
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getRole() {
@@ -45,11 +53,27 @@ public class UserDTO {
         this.role = role;
     }
 
-    public String getUsername() {
-        return username;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

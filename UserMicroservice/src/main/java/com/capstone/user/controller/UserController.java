@@ -33,6 +33,7 @@ public class UserController {
     
     @GetMapping("/{userId}")
     public UserResponseDTO getUser(@PathVariable UUID userId) {
+    	System.out.println("CMOSSOSOS");
         return service.getUserById(userId);
     }
 

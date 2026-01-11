@@ -24,7 +24,7 @@ public class CourseModuleController {
     public CourseModuleResponseDTO createModule(@RequestBody CourseModuleRequestDTO dto) {
         return service.createModule(dto);
     }
-    @PreAuthorize("hasRole('TRAINEE')")
+    @PreAuthorize("hasRole('TRAINEE') or hasRole('TRAINER')")
     @GetMapping("/course/{courseId}")
     public List<CourseModuleResponseDTO> getModulesByCourse(@PathVariable UUID courseId) {
         return service.getModulesByCourse(courseId);

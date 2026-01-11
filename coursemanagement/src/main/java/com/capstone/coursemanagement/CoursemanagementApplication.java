@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients(basePackages="com.capstone.coursemanagement.client")
+@EnableDiscoveryClient
 public class CoursemanagementApplication {
 
 	public static void main(String[] args) {
