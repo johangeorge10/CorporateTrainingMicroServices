@@ -28,20 +28,25 @@ public class AssessmentController {
     @GetMapping("/course/{courseId}")
     @PreAuthorize("hasRole('TRAINER')")
     public ResponseEntity<?> getAssessmentByCourseId(@PathVariable UUID courseId) {
-        // Step 1: Search for assessment by courseId
-        // You'll need to add this method to AssessmentRepository
-    	Assessment assessment = service.findAssessmentByCourseId(courseId)
-                .orElseThrow(() -> new RuntimeException("No assessment found for course: " + courseId));
 
-        // Step 2: If assessment found, get all questions
-        List<Question> questions = service.findQuestionsByAssessmentId(assessment.getId());
+        return service.findAssessmentByCourseId(courseId)
+            .map(assessment -> {
+                List<Question> questions =
+                    service.findQuestionsByAssessmentId(assessment.getId());
 
-        // Step 3: Return combined response
-        return ResponseEntity.ok(Map.of(
-                "assessment", assessment,
-                "questions", questions
-        ));
+                return ResponseEntity.ok(
+                    Map.of(
+                        "assessment", assessment,
+                        "questions", questions
+                    )
+                );
+            })
+            .orElseGet(() ->
+                ResponseEntity.status(404)
+                    .body(Map.of("message", "No assessment found for this course"))
+            );
     }
+
     
     @PreAuthorize("hasAnyRole('TRAINER')")
     @PostMapping("/course/{courseId}")
@@ -50,6 +55,8 @@ public class AssessmentController {
             @RequestBody CreateAssessmentDTO dto) {
         return service.createAssessment(courseId, dto);
     }
+    
+    //Not Required
     @PreAuthorize("hasAnyRole('TRAINER')")
     @GetMapping("/course/assesments")
     public List<Assessment> cassesment() {

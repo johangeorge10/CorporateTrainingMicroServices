@@ -94,14 +94,14 @@ public class CourseService {
 
     public List<Course> getCoursesByTrainer(UUID trainerId) {
         // Optional: Validate trainer exists
-//        UserDTO trainer = userClient.getUserById(trainerId);
-//        if (trainer == null) {
-//            throw new RuntimeException("Trainer not found in User Service");
-//        }
+        UserDTO trainer = userClient.getUserById(trainerId);
+        if (trainer == null) {
+            throw new RuntimeException("Trainer not found in User Service");
+        }
         System.out.println("Trainer Role ");
-//        if (!"TRAINER".equalsIgnoreCase(trainer.getRole())) {
-//            throw new RuntimeException("User is not a Trainer");
-//        }
+        if (!"TRAINER".equalsIgnoreCase(trainer.getRole())) {
+            throw new RuntimeException("User is not a Trainer");
+        }
 
         return repository.findByTrainerId(trainerId);
     }

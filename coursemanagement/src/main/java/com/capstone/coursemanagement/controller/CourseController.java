@@ -34,7 +34,7 @@ public class CourseController {
     public CourseResponseDTO createCourse(@RequestBody CourseRequestDTO dto, @RequestParam UUID trainerId) {
         return service.createCourse(dto, trainerId);
     }
-    @PreAuthorize("hasRole('TRAINEE')")
+    @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN') or hasRole('TRAINEE')")
     @GetMapping("/{id}")
     public CourseResponseDTO getCourse(@PathVariable UUID id) {
         return service.getCourseById(id);
