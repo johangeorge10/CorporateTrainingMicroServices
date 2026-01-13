@@ -33,6 +33,7 @@ public class CourseController {
     public CourseResponseDTO getCourse(@PathVariable UUID id) {
         return service.getCourseById(id);
     }
+
     @PreAuthorize("hasAnyRole('TRAINER','ADMIN','TRAINEE')")
     @GetMapping
     public List<CourseResponseDTO> getAllCourses() {

@@ -8,6 +8,7 @@ public class EnrollmentResponseDTO {
     private UUID id;
     private UUID userId;
     private UUID courseId;
+	private UUID courseName;
     private LocalDateTime enrolledAt;
     private String status;
 	public UUID getId() {
@@ -16,6 +17,15 @@ public class EnrollmentResponseDTO {
 	public void setId(UUID id) {
 		this.id = id;
 	}
+
+	public UUID getCourseName() {
+		return courseName;
+	}
+
+	public void setCourseName(UUID courseName) {
+		this.courseName = courseName;
+	}
+
 	public UUID getUserId() {
 		return userId;
 	}

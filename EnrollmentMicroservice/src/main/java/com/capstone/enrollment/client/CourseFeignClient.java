@@ -1,12 +1,13 @@
 package com.capstone.enrollment.client;
 
+import com.capstone.enrollment.config.FeignClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
-@FeignClient(name = "course-management-service", url = "http://localhost:8082")
+@FeignClient(name = "course-management-service", configuration = FeignClientConfig.class)
 public interface CourseFeignClient {
 
     @GetMapping("/api/courses/{courseId}")

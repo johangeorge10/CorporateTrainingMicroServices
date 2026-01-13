@@ -1,4 +1,4 @@
-package com.capstone.coursemanagement.config;
+package com.capstone.enrollment.config;
 
 import feign.RequestInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,18 +9,16 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Configuration
 public class FeignClientConfig {
+
     @Bean
     public RequestInterceptor requestInterceptor() {
         return requestTemplate -> {
-            // Get the current HTTP request
             ServletRequestAttributes attributes =
                     (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if (attributes != null) {
                 HttpServletRequest request = attributes.getRequest();
                 String authHeader = request.getHeader("Authorization");
                 if (authHeader != null) {
-                    // Forward the same Authorization header to Feign
-                    System.out.println("🔑 Forwarding Authorization header: " + authHeader.substring(0, 20) + "...");
                     requestTemplate.header("Authorization", authHeader);
                 }
             }
