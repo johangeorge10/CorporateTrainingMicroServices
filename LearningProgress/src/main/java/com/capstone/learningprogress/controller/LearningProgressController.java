@@ -27,8 +27,8 @@ public class LearningProgressController {
     @PreAuthorize("hasAnyRole('TRAINEE')")
     @GetMapping("/course/{courseId}/user/{userId}")
     public CourseProgressResponseDTO getCourseProgress(
-            @PathVariable(name="courseId") UUID courseId,
-            @PathVariable(name="userId") UUID userId) {
+            @PathVariable UUID courseId,
+            @PathVariable UUID userId) {
         return service.getCourseProgress(userId, courseId);
     }
 }

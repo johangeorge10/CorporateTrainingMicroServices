@@ -21,13 +21,7 @@ public class CourseController {
     public CourseController(CourseService service) {
         this.service = service;
     }
-
-    //Controller
-//    @PreAuthorize("hasRole('TRAINER')")
-//    @GetMapping("/trainer/{trainerId}")
-//    public List<CourseResponseDTO> getcoursebytrainer(@PathVariable UUID id){
-//    	return service.getCoursesByTrainer(id);
-//    }
+    //Full Trainer Part Done 
     
     @PreAuthorize("hasRole('TRAINER')")
     @PostMapping("/create")

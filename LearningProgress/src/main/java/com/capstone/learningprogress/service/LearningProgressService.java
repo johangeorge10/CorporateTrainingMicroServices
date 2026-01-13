@@ -28,7 +28,8 @@ public class LearningProgressService {
         repository.findByUserIdAndCourseIdAndModuleId(
                 dto.getUserId(), dto.getCourseId(), dto.getModuleId()
         ).ifPresent(p -> {
-            throw new RuntimeException("Module already completed");
+        	System.out.println("");
+            return;
         });
 
         ModuleProgress progress = new ModuleProgress();

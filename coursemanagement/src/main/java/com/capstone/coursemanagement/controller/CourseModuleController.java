@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-
+//TRainer Feature Done
 @RestController
 @RequestMapping("/api/modules")
 public class CourseModuleController {
@@ -19,6 +19,7 @@ public class CourseModuleController {
     public CourseModuleController(CourseModuleService service) {
         this.service = service;
     }
+    
     @PreAuthorize("hasRole('TRAINER')")
     @PostMapping
     public CourseModuleResponseDTO createModule(@RequestBody CourseModuleRequestDTO dto) {

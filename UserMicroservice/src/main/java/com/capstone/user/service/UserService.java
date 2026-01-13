@@ -99,4 +99,8 @@ public class UserService {
         dto.setToken(token);   // token only on login
         return dto;
     }
+    public void deleteUser(UUID userId) {
+    	repository.deleteById(userId);
+    }
+
 }

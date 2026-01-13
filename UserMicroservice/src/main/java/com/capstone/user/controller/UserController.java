@@ -42,4 +42,20 @@ public class UserController {
     public List<UserResponseDTO> getAllUsers() {
         return service.getAllUsers();
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{userId}")
+    public String deleteUser(@PathVariable UUID userId) {
+
+        UserResponseDTO user = service.getUserById(userId);
+
+        // 🚫 Prevent deleting admin account
+        if ("ADMIN".equalsIgnoreCase(user.getRole().toString()) ||
+            "admin@capstone.com".equalsIgnoreCase(user.getEmail())) {
+            throw new RuntimeException("Admin user cannot be deleted");
+        }
+
+        service.deleteUser(userId);
+        return "User deleted successfully";
+    }
+
 }

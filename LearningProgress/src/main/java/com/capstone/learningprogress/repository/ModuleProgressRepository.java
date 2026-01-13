@@ -23,6 +23,7 @@ public interface ModuleProgressRepository extends JpaRepository<ModuleProgress, 
         @Param("p_course_id") String courseId
     );
 
+    List<ModuleProgress> findByUserIdAndCourseIdAndCompletedTrue(UUID userId, UUID courseId);
     
     
 }
