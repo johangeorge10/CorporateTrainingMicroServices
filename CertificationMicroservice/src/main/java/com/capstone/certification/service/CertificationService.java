@@ -15,12 +15,16 @@ public class CertificationService {
 
     private final CertificateRepository repository;
     private final AssessmentClient assessmentClient;
-
+//    private final CertificatePdfService pdfService;
+    
     public CertificationService(
             CertificateRepository repository,
-            AssessmentClient assessmentClient) {
+            AssessmentClient assessmentClient
+//            ,CertificatePdfService pdfService
+            ) {
         this.repository = repository;
         this.assessmentClient = assessmentClient;
+//        this.pdfService = pdfService;
     }
 
     public Certificate issueCertificate(
@@ -57,4 +61,10 @@ public class CertificationService {
     public List<Certificate> getCertificatesByUser(UUID userId) {
         return repository.findByUserId(userId);
     }
+    
+    public Certificate getCertificateById(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Certificate not found"));
+    }
+
 }
