@@ -71,6 +71,15 @@ public class EnrollmentService {
         enrollment.setStatus("COMPLETED");
         return mapToResponse(repository.save(enrollment));
     }
+    public EnrollmentResponseDTO markCompletedByUserAndCourse(UUID userId, UUID courseId) {
+
+        Enrollment enrollment = repository.findByUserIdAndCourseId(userId, courseId)
+                .orElseThrow(() -> new RuntimeException(
+                        "Enrollment not found for userId=" + userId + " courseId=" + courseId));
+
+        enrollment.setStatus("COMPLETED");
+        return mapToResponse(repository.save(enrollment));
+    }
 
     private EnrollmentResponseDTO mapToResponse(Enrollment enrollment) {
         EnrollmentResponseDTO dto = new EnrollmentResponseDTO();

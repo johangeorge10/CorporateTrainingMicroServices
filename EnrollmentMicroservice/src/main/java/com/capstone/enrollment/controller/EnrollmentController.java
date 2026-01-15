@@ -42,4 +42,13 @@ public class EnrollmentController {
     public EnrollmentResponseDTO complete(@PathVariable UUID enrollmentId) {
         return service.markCompleted(enrollmentId);
     }
+    @PreAuthorize("hasAnyRole('TRAINEE')")
+    @PutMapping("/complete")
+    public EnrollmentResponseDTO completeByUserAndCourse(
+            @RequestParam UUID userId,
+            @RequestParam UUID courseId
+    ) {
+        return service.markCompletedByUserAndCourse(userId, courseId);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.capstone.assessment.service;
 
+import com.capstone.assessment.client.EnrollmentFeignClient;
 import com.capstone.assessment.client.LearningProgressFeignClient;
 import com.capstone.assessment.dto.*;
 import com.capstone.assessment.entity.*;
@@ -19,16 +20,20 @@ public class AssessmentService {
     private final QuestionRepository questionRepo;
     private final AssessmentAttemptRepository attemptRepo;
     private final LearningProgressFeignClient progressClient;
-
+    private final EnrollmentFeignClient enrollmentClient;
+    
     public AssessmentService(
             AssessmentRepository assessmentRepo,
             QuestionRepository questionRepo,
             AssessmentAttemptRepository attemptRepo,
-            LearningProgressFeignClient progressClient) {
+            LearningProgressFeignClient progressClient,
+            EnrollmentFeignClient enrollmentClient
+    ) {
         this.assessmentRepo = assessmentRepo;
         this.questionRepo = questionRepo;
         this.attemptRepo = attemptRepo;
         this.progressClient = progressClient;
+        this.enrollmentClient = enrollmentClient;
     }
 
     // -------- TRAINER --------
@@ -97,51 +102,74 @@ public class AssessmentService {
                 }).toList();
     }
 
-    public AssessmentResultDTO attemptExam(AssessmentAttemptRequestDTO dto) {
+   public AssessmentResultDTO attemptExam(AssessmentAttemptRequestDTO dto) {
 
-        Assessment assessment = assessmentRepo.findById(dto.getAssessmentId())
-                .orElseThrow(() -> new RuntimeException("Assessment not found"));
+    Assessment assessment = assessmentRepo.findById(dto.getAssessmentId())
+            .orElseThrow(() -> new RuntimeException("Assessment not found"));
 
-        // Eligibility check+
-        System.out.println("Assesment"+assessment);
-        System.out.println("Course Id:  "+assessment.getCourseId());
-        CourseProgressResponseDTO progress = progressClient.getCourseProgress(
-                assessment.getCourseId(), dto.getUserId());
+    // ✅ Eligibility check
+    CourseProgressResponseDTO progress = progressClient.getCourseProgress(
+            assessment.getCourseId(), dto.getUserId());
 
-        if (progress.getCompletionPercentage() < 100) {
-        	System.out.println(progress.getCompletionPercentage());
-            throw new RuntimeException("Course not fully completed\n"+progress.toString()+"   id->   "+dto.getUserId()+"   Courseid  "+assessment.getCourseId()+"  ");
-        }
-
-        attemptRepo.findByUserIdAndAssessmentId(dto.getUserId(), dto.getAssessmentId())
-                .ifPresent(a -> { throw new RuntimeException("Assessment already attempted"); });
-
-        List<Question> questions = questionRepo.findByAssessmentId(dto.getAssessmentId());
-
-        int correct = 0;
-        for (Question q : questions) {
-            if (q.getCorrectOption().equalsIgnoreCase(dto.getAnswers().get(q.getId()))) {
-                correct++;
-            }
-        }
-
-        int score = (int) ((correct * 100.0) / questions.size());
-        boolean passed = score >= assessment.getPassPercentage();
-
-        AssessmentAttempt attempt = new AssessmentAttempt();
-        attempt.setUserId(dto.getUserId());
-        attempt.setAssessmentId(dto.getAssessmentId());
-        attempt.setScorePercentage(score);
-        attempt.setPassed(passed);
-        attempt.setAttemptedAt(LocalDateTime.now());
-
-        attemptRepo.save(attempt);
-
-        AssessmentResultDTO result = new AssessmentResultDTO();
-        result.setScorePercentage(score);
-        result.setPassed(passed);
-        return result;
+    if (progress.getCompletionPercentage() < 100) {
+        throw new RuntimeException("Course not fully completed");
     }
+
+    // ✅ Prevent multiple attempts
+    attemptRepo.findByUserIdAndAssessmentId(dto.getUserId(), dto.getAssessmentId())
+            .ifPresent(a -> {
+                throw new RuntimeException("Assessment already attempted");
+            });
+
+    // ✅ Load questions
+    List<Question> questions = questionRepo.findByAssessmentId(dto.getAssessmentId());
+
+    if (questions.isEmpty()) {
+        throw new RuntimeException("No questions found for assessment");
+    }
+
+    // ✅ Evaluate answers
+    int correct = 0;
+    for (Question q : questions) {
+        String userAnswer = dto.getAnswers().get(q.getId());
+        if (userAnswer != null &&
+            q.getCorrectOption().equalsIgnoreCase(userAnswer)) {
+            correct++;
+        }
+    }
+
+    int score = (int) ((correct * 100.0) / questions.size());
+    boolean passed = score >= assessment.getPassPercentage();
+
+    // ✅ Persist attempt FIRST
+    AssessmentAttempt attempt = new AssessmentAttempt();
+    attempt.setUserId(dto.getUserId());
+    attempt.setAssessmentId(dto.getAssessmentId());
+    attempt.setScorePercentage(score);
+    attempt.setPassed(passed);
+    attempt.setAttemptedAt(LocalDateTime.now());
+
+    attemptRepo.save(attempt);
+
+    // ✅ Mark course completed regardless of pass/fail
+    try {
+        enrollmentClient.markCourseCompleted(
+                dto.getUserId(),
+                assessment.getCourseId()
+        );
+        System.out.println("✅ Course marked as COMPLETED in Enrollment Service");
+    } catch (Exception ex) {
+        System.err.println("❌ Failed to update course completion: " + ex.getMessage());
+        // intentionally NOT throwing exception → assessment result must still succeed
+    }
+
+    // ✅ Build response
+    AssessmentResultDTO result = new AssessmentResultDTO();
+    result.setScorePercentage(score);
+    result.setPassed(passed);
+    return result;
+}
+
     public AssessmentAttemptStatusDTO getAttemptStatus(UUID userId, UUID courseId) {
     	
     	Assessment ob=assessmentRepo.findByCourseId(courseId).orElseThrow( ()->new RuntimeException("No Course Found"));

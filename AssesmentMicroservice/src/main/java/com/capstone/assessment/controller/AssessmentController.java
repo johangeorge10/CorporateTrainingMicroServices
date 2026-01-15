@@ -77,6 +77,16 @@ public class AssessmentController {
     }
 
     // -------- USER --------
+    
+    
+    @PreAuthorize("hasAnyRole('TRAINEE')")
+    @GetMapping("/course/{courseId}/user")
+    public Assessment getAssessmentForUser(@PathVariable UUID courseId) {
+        return service.findAssessmentByCourseId(courseId)
+                .orElseThrow(() -> new RuntimeException("Assessment not found for course"));
+    }
+
+    
     @PreAuthorize("hasAnyRole('TRAINEE')")
     @GetMapping("/{assessmentId}/questions/user")
     public List<QuestionUserViewDTO> getQuestionsForUser(
