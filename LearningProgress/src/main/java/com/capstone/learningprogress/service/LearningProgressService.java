@@ -8,6 +8,7 @@ import com.capstone.learningprogress.repository.ModuleProgressRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 //import java.util.List;
 import java.util.UUID;
 
@@ -25,47 +26,57 @@ public class LearningProgressService {
 
     public void markModuleCompleted(ModuleProgressRequestDTO dto) {
 
-        repository.findByUserIdAndCourseIdAndModuleId(
-                dto.getUserId(), dto.getCourseId(), dto.getModuleId()
-        ).ifPresent(p -> {
-        	System.out.println("");
-            return;
-        });
+    boolean alreadyCompleted =
+            repository.findByUserIdAndCourseIdAndModuleId(
+                    dto.getUserId(),
+                    dto.getCourseId(),
+                    dto.getModuleId()
+            ).isPresent();
 
-        ModuleProgress progress = new ModuleProgress();
-        progress.setUserId(dto.getUserId());
-        progress.setCourseId(dto.getCourseId());
-        progress.setModuleId(dto.getModuleId());
-        progress.setCompleted(true);
-        progress.setCompletedAt(LocalDateTime.now());
-
-        repository.save(progress);
+    if (alreadyCompleted) {
+        // Idempotent: already exists → nothing to do
+        return;
     }
 
-    public CourseProgressResponseDTO getCourseProgress(UUID userId, UUID courseId) {
-    	System.out.println("courseid :  "+courseId);
-        int totalModules =courseClient.getModulesByCourse(courseId).size();
-        System.out.println("Total Modules :"+totalModules);
+    ModuleProgress progress = new ModuleProgress();
+    progress.setUserId(dto.getUserId());
+    progress.setCourseId(dto.getCourseId());
+    progress.setModuleId(dto.getModuleId());
+    progress.setCompleted(true);
+    progress.setCompletedAt(LocalDateTime.now());
 
-//        long completedModules =
-//                repository.countByUserIdAndCourseIdAndCompletedTrue(userId, courseId);
-        long completedModules =
-                repository.countCompleted(
-                userId.toString(),
-                courseId.toString()
-            );
-        
-        System.out.println("Completed  Modules :"+completedModules);
+    repository.save(progress);
+}
+
+
+    public CourseProgressResponseDTO getCourseProgress(UUID userId, UUID courseId) {
+
+        int totalModules = courseClient.getModulesByCourse(courseId).size();
+
+        List<ModuleProgress> completedEntities =
+                repository.findByUserIdAndCourseIdAndCompletedTrue(userId, courseId);
+
+        int completedModules = completedEntities.size();
+
+        List<UUID> completedModuleIds =
+                completedEntities.stream()
+                        .map(ModuleProgress::getModuleId)
+                        .toList();
 
         double percentage =
-                (totalModules == 0) ? 0 : (completedModules * 100.0) / totalModules;
+                (totalModules == 0)
+                        ? 0
+                        : (completedModules * 100.0) / totalModules;
 
         CourseProgressResponseDTO dto = new CourseProgressResponseDTO();
         dto.setTotalModules(totalModules);
-        dto.setCompletedModules((int) completedModules);
+        dto.setCompletedModules(completedModules);
+        dto.setCompletedModuleIds(completedModuleIds);
         dto.setCompletionPercentage(percentage);
         dto.setEligibleForAssessment(percentage == 100.0);
-        System.out.println("Percentage :"+percentage);
+
         return dto;
     }
+
+
 }

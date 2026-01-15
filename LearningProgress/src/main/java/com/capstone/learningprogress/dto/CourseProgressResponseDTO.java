@@ -1,11 +1,21 @@
 package com.capstone.learningprogress.dto;
 
+import java.util.List;
+import java.util.UUID;
+
 public class CourseProgressResponseDTO {
 
     private int totalModules;
     private int completedModules;
     private double completionPercentage;
-    private boolean eligibleForAssessment;
+    public List<UUID> getCompletedModuleIds() {
+		return completedModuleIds;
+	}
+	public void setCompletedModuleIds(List<UUID> completedModuleIds) {
+		this.completedModuleIds = completedModuleIds;
+	}
+	private boolean eligibleForAssessment;
+    private List<UUID> completedModuleIds;
 	public int getTotalModules() {
 		return totalModules;
 	}
