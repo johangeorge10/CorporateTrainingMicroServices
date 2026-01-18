@@ -1,10 +1,14 @@
 package com.capstone.user.controller;
 
+import com.capstone.user.common.ApiResponse;
 import com.capstone.user.dto.UserLoginRequestDTO;
 import com.capstone.user.dto.UserResponseDTO;
 import com.capstone.user.dto.UserSignupRequestDTO;
 import com.capstone.user.service.UserService;
 
+import jakarta.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +31,19 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public UserResponseDTO login(@RequestBody UserLoginRequestDTO dto) {
-        return service.login(dto);
+    public ResponseEntity<ApiResponse<UserResponseDTO>> login(
+            @Valid @RequestBody UserLoginRequestDTO dto) {
+
+        UserResponseDTO user = service.login(dto);
+
+        ApiResponse<UserResponseDTO> response =
+                new ApiResponse<>(true, "Login successful", user);
+
+        return ResponseEntity.ok(response);
     }
+
+
+
     
     @GetMapping("/{userId}")
     public UserResponseDTO getUser(@PathVariable UUID userId) {

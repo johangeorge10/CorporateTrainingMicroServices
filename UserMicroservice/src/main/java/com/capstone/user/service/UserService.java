@@ -4,6 +4,8 @@ import com.capstone.user.dto.UserLoginRequestDTO;
 import com.capstone.user.dto.UserResponseDTO;
 import com.capstone.user.dto.UserSignupRequestDTO;
 import com.capstone.user.entity.User;
+import com.capstone.user.exception.AccountInactiveException;
+import com.capstone.user.exception.InvalidCredentialsException;
 import com.capstone.user.repository.UserRepository;
 import com.capstone.user.security.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,14 +57,17 @@ public class UserService {
     public UserResponseDTO login(UserLoginRequestDTO dto) {
 
         User user = repository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() ->
+                    new InvalidCredentialsException("Email Not Found"));
 
-        // 🔐 VERIFY HASHED PASSWORD
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException("Invalid credentials Password Not Matching");
         }
 
-        // 🔑 GENERATE JWT
+        if (!Boolean.TRUE.equals(user.getActive())) {
+            throw new AccountInactiveException("Account is inactive");
+        }
+
         String token = jwtUtil.generateToken(
                 user.getId(),
                 user.getEmail(),
@@ -71,6 +76,7 @@ public class UserService {
 
         return mapToResponse(user, token);
     }
+
 
     // ---------------- GET USER ----------------
     public UserResponseDTO getUserById(UUID userId) {

@@ -29,8 +29,8 @@ public class User {
     private String name;
 
     @Column(nullable = false, unique = true)
-    @Email
-    @Pattern(regexp="^[\\w.]+@tcs\\.com$")
+//    @Email
+    @Pattern(regexp="^[\\w.]+@mycompany\\.com$" , message = "Email must be a valid mycompany email (mycompany.com)")
     private String email;
 
     //@Column(nullable = false)
