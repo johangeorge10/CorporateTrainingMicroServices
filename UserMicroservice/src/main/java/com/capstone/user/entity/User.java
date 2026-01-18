@@ -1,6 +1,12 @@
 package com.capstone.user.entity;
 import com.capstone.user.entity.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 import java.util.UUID;
 
 @Entity
@@ -17,17 +23,23 @@ public class User {
     private UUID id;
 
     @Column(nullable = false)
+    @NotBlank
+    @Size(min=3,max=20)
+    @Pattern(regexp="^[a-zA-Z]+$")
     private String name;
 
     @Column(nullable = false, unique = true)
+    @Email
+    @Pattern(regexp="^[\\w.]+@tcs\\.com$")
     private String email;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
+    @NotNull
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;   // ADMIN, TRAINER, USER
+    private Role role;   // ADMIN, TRAINER, TRAINEE
 
     @Column(nullable = false)
     private Boolean active = true;
