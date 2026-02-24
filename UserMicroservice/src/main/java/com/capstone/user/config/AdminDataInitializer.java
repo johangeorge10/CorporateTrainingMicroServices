@@ -18,13 +18,13 @@ public class AdminDataInitializer {
     ) {
         return args -> {
 
-            String adminEmail = "admin@capstone.com";
+            String adminEmail = "admin@mycompany.com";
 
             boolean adminExists = userRepository.findByEmail(adminEmail).isPresent();
 
             if (!adminExists) {
                 User admin = new User();
-                admin.setName("System Admin");
+                admin.setName("System_Admin");
                 admin.setEmail(adminEmail);
                 admin.setPassword(passwordEncoder.encode("admin123"));
                 admin.setRole(Role.ADMIN);
