@@ -1,11 +1,16 @@
 package com.capstone.user.dto;
 
 import com.capstone.user.entity.Role;
+import com.capstone.user.validation.StrongPassword;
+
+import jakarta.validation.constraints.NotBlank;
 
 public class UserSignupRequestDTO {
 
     private String name;
     private String email;
+    @NotBlank
+    @StrongPassword
     private String password;
     private Role role; // ADMIN / EMPLOYEE
 	public String getName() {
