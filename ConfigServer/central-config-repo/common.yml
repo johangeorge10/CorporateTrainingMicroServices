@@ -3,11 +3,11 @@ jwt:
 
 spring:
   datasource:
-    username: root
-    password: Root123$
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:Root123$}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}

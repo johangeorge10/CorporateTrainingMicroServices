@@ -6,7 +6,7 @@ spring:
     name: user-service
   
   datasource:
-    url: jdbc:mysql://localhost:3306/user_db?createDatabaseIfNotExist=true
+    url: ${SPRING_DATASOURCE_URL_USERDB:jdbc:mysql://localhost:3306/user_db?createDatabaseIfNotExist=true}
     # username: root
     # password: Root123$
     # driver-class-name: com.mysql.cj.jdbc.Driver
@@ -24,7 +24,7 @@ spring:
     eureka:
       client:
         service-url:
-          defaultZone: http://localhost:8761/eureka/
+          defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
         fetch-registry: true
         register-with-eureka: true
       instance:

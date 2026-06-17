@@ -1,0 +1,78 @@
+
+#network:
+docker create network mynetwork
+
+#eureka server:
+docker build -t eurekaserver .
+docker run --rm -p 8761:8761 --network mynetwork --name eurekaserver eurekaserver
+
+#central config server:
+docker build -t configserver .
+docker run --rm --env-file "/home/johan/Desktop/STS -Personal/CorporateTrainingMicroServices/.env" -p 8888:8888 --network mynetwork --name centralconfigserver configserver 
+required env:
+SPRING_DATASOURCE_USERNAME=root
+SPRING_DATASOURCE_PASSWORD=root
+EUREKA_SERVER_URL=http://eurekaserver:8761/eureka/
+SPRING_DATASOURCE_URL_USERDB=jdbc:mysql://mysql_userdb:3306/user_db?createDatabaseIfNotExist=true
+SPRING_DATASOURCE_URL_COURSEDB=jdbc:mysql://mysql_coursedb:3306/course_management_db?createDatabaseIfNotExist=true
+
+
+#api gateway
+docker build -t apigateway .
+docker run --rm --env-file "/home/johan/Desktop/STS -Personal/CorporateTrainingMicroServices/.env" -p 8090:8090 --network mynetwork --name apigateway apigateway 
+req env:
+EUREKA_SERVER_URL=http://eurekaserver:8761/eureka/
+
+#usermc
+docker build -t usermc .
+docker run --rm --env-file "/home/johan/Desktop/STS -Personal/CorporateTrainingMicroServices/.env" -p 8089:8089 --network mynetwork --name userMicroService usermc
+SPRING_CLOUD_CONFIG_URI=http://centralconfigserver:8888
+
+
+#coursemc
+docker build -t johxn/coursemanagement:1.0.0 .
+docker run --rm --env-file "/home/johan/Desktop/STS -Personal/CorporateTrainingMicroServices/.env" -p 8088:8088 --network mynetwork --name couseMicroService coursemc
+req env:
+SPRING_CLOUD_CONFIG_URI=http://centralconfigserver:8888
+
+
+docker volume create mysql_data (userdb)
+docker volume create course_mysql_data (course_db)
+
+docker run -d \
+  --name mysql \
+  --network mynetwork \
+  -v mysql_data:/var/lib/mysql \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=user_db \
+  -p 3306:3306 \
+  mysql:8
+
+
+  mount point: /var/lib/docker/volumes/mysql_data/_data
+
+
+docker run -d \
+  --name course_mysql \
+  --network mynetwork \
+  -v course_mysql_data:/var/lib/mysql \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=course_db \
+  -p 3307:3306 \
+  mysql:8
+
+  mount point: /var/lib/docker/volumes/course_mysql_data/_data
+
+  env path: "/home/johan/Desktop/STS -Personal/CorporateTrainingMicroServices/.env"
+
+
+http://localhost:8090/api/users/signup
+  {
+    "name":"",
+    "email":"",
+    "password":"",
+    "role":"",
+}
+    
+
+    Docker taging and pushing to DOckerHub

@@ -25,7 +25,7 @@ public class User {
     @Column(nullable = false)
     @NotBlank
     @Size(min=3,max=20)
-    @Pattern(regexp="^[a-zA-Z]+$")
+    @Pattern(regexp="^[a-zA-Z ]+$", message="Name can only contain letters and spaces")
     private String name;
 
     @Column(nullable = false, unique = true)
