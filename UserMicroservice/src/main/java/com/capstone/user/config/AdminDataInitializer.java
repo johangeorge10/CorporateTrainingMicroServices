@@ -24,7 +24,7 @@ public class AdminDataInitializer {
 
             if (!adminExists) {
                 User admin = new User();
-                admin.setName("System_Admin");
+                admin.setName("SystemAdmin");
                 admin.setEmail(adminEmail);
                 admin.setPassword(passwordEncoder.encode("admin123"));
                 admin.setRole(Role.ADMIN);
