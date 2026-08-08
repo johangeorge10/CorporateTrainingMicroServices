@@ -1,5 +1,6 @@
 package com.capstone.coursemanagement.service;
 
+import com.capstone.coursemanagement.aianalyzer.PdfAnalyzer;
 import com.capstone.coursemanagement.client.UserClient;
 import com.capstone.coursemanagement.dto.CourseRequestDTO;
 import com.capstone.coursemanagement.dto.CourseResponseDTO;
@@ -7,23 +8,28 @@ import com.capstone.coursemanagement.dto.UserDTO;
 import com.capstone.coursemanagement.entity.Course;
 import com.capstone.coursemanagement.repository.CourseModuleRepository;
 import com.capstone.coursemanagement.repository.CourseRepository;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 @Service
 public class CourseService {
 
     private final CourseRepository repository;
     private final CourseModuleRepository crp;
     private final UserClient userClient;
-    public CourseService(CourseRepository repository, CourseModuleRepository crp, UserClient userClient) {
+    private final PdfAnalyzer pdfAnalyzer;
+
+    public CourseService(CourseRepository repository, CourseModuleRepository crp, UserClient userClient,PdfAnalyzer pdfAnalyzer) {
         this.repository = repository;
         this.crp=crp;
         this.userClient = userClient;
+        this.pdfAnalyzer = pdfAnalyzer;
     }
 
     public CourseResponseDTO createCourse(CourseRequestDTO dto, UUID trainerId) {
@@ -41,6 +47,10 @@ public class CourseService {
         course.setTrainerId(trainerId);
 
         return mapToResponse(repository.save(course));
+    }
+    
+    public String createCourseusingAi(MultipartFile file) {
+    return pdfAnalyzer.extractText(file);
     }
     
 //    public List<CourseResponseDTO> getCoursesByTrainer(UUID id) {

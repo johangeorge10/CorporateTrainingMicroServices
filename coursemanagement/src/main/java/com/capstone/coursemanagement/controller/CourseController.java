@@ -1,13 +1,16 @@
 package com.capstone.coursemanagement.controller;
 
 
+import com.capstone.coursemanagement.aianalyzer.GeminiAPI;
 import com.capstone.coursemanagement.dto.CourseRequestDTO;
 import com.capstone.coursemanagement.dto.CourseResponseDTO;
 import com.capstone.coursemanagement.entity.Course;
 import com.capstone.coursemanagement.service.CourseService;
-
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,9 +20,10 @@ import java.util.UUID;
 public class CourseController {
 
     private final CourseService service;
-
-    public CourseController(CourseService service) {
+    private final GeminiAPI api;
+    public CourseController(CourseService service,GeminiAPI api) {
         this.service = service;
+        this.api=api;
     }
     //Full Trainer Part Done 
     
@@ -28,6 +32,20 @@ public class CourseController {
     public CourseResponseDTO createCourse(@RequestBody CourseRequestDTO dto, @RequestParam UUID trainerId) {
         return service.createCourse(dto, trainerId);
     }
+    
+    
+    
+    //PDF extraction
+    @PreAuthorize("hasRole('TRAINER')")
+    @PostMapping(value="/createUsingAi",consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String createCourseusingAi(@RequestParam("file") MultipartFile file) {
+        String str = service.createCourseusingAi(file);
+        return api.askAi(str);
+    }
+    
+    
+    
+    
     @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN') or hasRole('TRAINEE')")
     @GetMapping("/{id}")
     public CourseResponseDTO getCourse(@PathVariable UUID id) {

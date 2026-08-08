@@ -1,8 +1,13 @@
 spring:
   application:
-    name: course-management-service   
+    name: course-management-service
 
   cloud:
     config:
       uri: http://localhost:8888
       name: common,course-management-service
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}
+    url: https://generativelanguage.googleapis.com
